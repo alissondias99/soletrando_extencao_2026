@@ -1,62 +1,53 @@
 import pygame
 import random
+import threading 
 import pyttsx3
 import sys
 
-# --- Configurações Iniciais ---
+import config
+import interface
+
+# Inicialização
 pygame.init()
+tela = pygame.display.set_mode((config.LARGURA, config.ALTURA))
+pygame.display.set_caption(config.TITULO)
 
-# Configuração da Voz (TTS)
-engine = pyttsx3.init()
-
-# 1. Obter todas as vozes instaladas no computador
-vozes = engine.getProperty('voices')
-voz_encontrada = False
-
-# 2. Procurar por uma voz brasileira
-for voz in vozes:
-    # Verifica se o ID ou o Nome contém "BR", "Brazil" ou "PT"
-    if "brazil" in voz.name.lower() or "pt-br" in voz.id.lower() or "portuguese" in voz.name.lower():
-        engine.setProperty('voice', voz.id)
-        voz_encontrada = True
-        print(f"Voz definida para: {voz.name}") # Apenas para você conferir no terminal
+# ↓ Procura por um pacote de voz em português no sistema seguindo padrão windows, se não achar o programa ira falar em inglês
+VOZ_ID_BRASILEIRA = None 
+temp_engine = pyttsx3.init()
+for voz in temp_engine.getProperty('voices'):
+    if "brazil" in voz.name.lower() or "pt-br" in voz.id.lower():
+        VOZ_ID_BRASILEIRA = voz.id
         break
-
-# Se não encontrar nenhuma, avisa no terminal (vai usar a padrão em inglês)
-if not voz_encontrada:
-    print("AVISO: Nenhuma voz em português foi encontrada no sistema.")
-
-engine.setProperty('rate', 150) # Velocidade da fala
-
-# Cores
-BRANCO = (255, 255, 255)
-PRETO = (0, 0, 0)
-VERDE = (50, 205, 50)
-VERMELHO = (220, 20, 60)
-CINZA = (200, 200, 200)
-
-# Tela
-LARGURA, ALTURA = 800, 600
-tela = pygame.display.set_mode((LARGURA, ALTURA))
-pygame.display.set_caption("Soletrando com Pygame")
+del temp_engine
 
 # Fontes
-fonte_grande = pygame.font.Font(None, 80)
-fonte_media = pygame.font.Font(None, 50)
-fonte_pequena = pygame.font.Font(None, 30)
+fonte_grande = pygame.font.Font(None, config.TAM_GRANDE)
+fonte_media = pygame.font.Font(None, config.TAM_MEDIO)
+fonte_pequena = pygame.font.Font(None, config.TAM_PEQUENO)
 
-# Lista de palavras
-palavras = ["ABACAXI", "COMPUTADOR", "PYTHON", "PROGRAMACAO", "JOGO", "ELEFANTE"]
+palavras = ["ABACAXI", "COMPUTADOR", "PYTHON", "ESCOLA", "LOUSA", "FUTURO"]
+falando_agora = False
+
+
+def executar_fala(texto): # fala a palavra, o programa fica travado enquanto a palavra estiver sendo dita
+    global falando_agora
+    try:
+        falando_agora = True
+        tts = pyttsx3.init()
+        if VOZ_ID_BRASILEIRA: tts.setProperty('voice', VOZ_ID_BRASILEIRA)
+        tts.setProperty('rate', 150)
+        tts.say(texto)
+        tts.runAndWait()
+    except: pass
+    finally: falando_agora = False
 
 def falar_palavra(palavra):
-    """Função para o computador falar a palavra"""
-    engine.say(f"Soletre a palavra: {palavra}")
-    engine.runAndWait()
+    if falando_agora: return
+    threading.Thread(target=executar_fala, args=(f"A palavra é: {palavra}",), daemon=True).start()
 
 def novo_jogo():
-    """Reseta o estado para uma nova palavra"""
-    palavra = random.choice(palavras)
-    return palavra, 0, "" # palavra_alvo, indice_atual, mensagem_erro
+    return random.choice(palavras), 0, ""
 
 # --- Loop Principal ---
 def main():
@@ -64,80 +55,93 @@ def main():
     relogio = pygame.time.Clock()
     
     palavra_alvo, indice_atual, msg_erro = novo_jogo()
-    tempo_erro = 0 # Para controlar quanto tempo a msg de erro fica na tela
+    tempo_erro = 0
     
-    # Fala a palavra assim que começa
-    # Nota: O pyttsx3 bloqueia o loop enquanto fala. 
-    # Para jogos complexos, usa-se threading, mas aqui simplificamos.
-    falar_palavra(palavra_alvo) 
+    # Variáveis de Animação
+    animacao_indice = -1   # Qual letra está animando
+    animacao_escala = 1.0  # Tamanho atual da letra (1.0 é normal, 1.5 é grande)
+    
+    pygame.time.delay(500)
+    falar_palavra(palavra_alvo)
 
     while rodando:
-        tela.fill(BRANCO)
+        # 1. Desenha o fundo da lousa (vem do interface.py)
+        interface.desenhar_fundo(tela)
         
         # Eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 rodando = False
-                
+            
             if event.type == pygame.KEYDOWN:
-                # Se o jogo acabou (palavra completa), ENTER reinicia
-                if indice_atual == len(palavra_alvo):
-                    if event.key == pygame.K_RETURN:
-                        palavra_alvo, indice_atual, msg_erro = novo_jogo()
-                        falar_palavra(palavra_alvo)
-                
-                # Tecla ESPAÇO repete a palavra
+                if indice_atual == len(palavra_alvo) and event.key == pygame.K_RETURN:
+                    palavra_alvo, indice_atual, msg_erro = novo_jogo()
+                    falar_palavra(palavra_alvo)
+                    
                 elif event.key == pygame.K_SPACE:
                     falar_palavra(palavra_alvo)
-                
-                # Lógica de digitação (apenas letras)
-                elif event.unicode.isalpha():
-                    letra_digitada = event.unicode.upper()
-                    letra_correta = palavra_alvo[indice_atual]
                     
-                    if letra_digitada == letra_correta:
+                elif event.unicode.isalpha() and indice_atual < len(palavra_alvo):
+                    letra = event.unicode.upper()
+                    if letra == palavra_alvo[indice_atual]:
+                        # ACERTOU: Configura a animação
+                        animacao_indice = indice_atual # Marca qual índice vai pular
+                        animacao_escala = 1.5          # Começa grande (150%)
+                        
                         indice_atual += 1
-                        msg_erro = "" # Limpa erro se acertar
+                        msg_erro = ""
                     else:
-                        msg_erro = f"Errado! Tente novamente. (Você digitou {letra_digitada})"
+                        msg_erro = f"Ops! '{letra}' não é a letra correta."
                         tempo_erro = pygame.time.get_ticks()
 
-        # --- Desenho na Tela ---
-        
-        # 1. Instruções
-        texto_instrucao = fonte_pequena.render("Pressione ESPAÇO para ouvir novamente", True, CINZA)
-        tela.blit(texto_instrucao, (20, 20))
+        # Animação
+        # Se a escala for maior que 1, diminui um pouco por frame
+        if animacao_escala > 1.0:
+            animacao_escala -= 0.05 # Velocidade da animação
+        else:
+            animacao_escala = 1.0
+            animacao_indice = -1 # Para a animação
 
-        # 2. Desenhar a palavra (Letras acertadas + Underlines para as que faltam)
-        pos_x_inicial = 100
-        espacamento = 60
+        # Desenhando os Elementos
         
-        for i, letra in enumerate(palavra_alvo):
-            pos_x = pos_x_inicial + (i * espacamento)
+        # Texto de instrução (no topo)
+        instrucao = fonte_pequena.render("ESPAÇO: Ouvir palavra  |  ENTER: Próxima palavra", True, config.BRANCO_GIZ)
+        tela.blit(instrucao, (config.LARGURA//2 - instrucao.get_width()//2, 30))
+
+        # Loop para desenhar as letras
+        largura_total = len(palavra_alvo) * 80 # = tamanho quadrado + espaço
+        inicio_x = (config.LARGURA - largura_total) // 2
+        
+        for i, letra_correta in enumerate(palavra_alvo):
+            pos_x = inicio_x + (i * 80)
+            pos_y = 250
             
             if i < indice_atual:
                 # Letra já acertada
-                texto = fonte_grande.render(letra, True, VERDE)
-                tela.blit(texto, (pos_x, 250))
+                escala_atual = 1.0
+                
+                # Se for a letra que acabamos de acertar, aplica o 'zoom'
+                if i == animacao_indice:
+                    escala_atual = animacao_escala
+                
+                # Chama a função visual do arquivo interface.py
+                interface.desenhar_quadrado_letra(tela, fonte_grande, letra_correta, pos_x, pos_y, escala_atual)
             else:
-                # Letra ainda não descoberta (mostra underline)
-                pygame.draw.line(tela, PRETO, (pos_x, 300), (pos_x + 40, 300), 5)
+                # Letra ainda oculta (apenas o underline ou quadrado vazio)
+                # Vamos desenhar um quadrado vazio escuro para parecer um buraco na madeira
+                pygame.draw.rect(tela, (20, 50, 30), (pos_x, pos_y, 70, 70), border_radius=5)
+                interface.desenhar_underline(tela, pos_x, pos_y)
 
-        # 3. Mensagem de Erro (some após 2 segundos)
+        # Mensagem de Erro
         if msg_erro:
-            agora = pygame.time.get_ticks()
-            if agora - tempo_erro < 2000: # 2000ms = 2 segundos
-                texto_erro = fonte_media.render(msg_erro, True, VERMELHO)
-                rect_erro = texto_erro.get_rect(center=(LARGURA//2, 450))
-                tela.blit(texto_erro, rect_erro)
-            else:
-                msg_erro = ""
+            if pygame.time.get_ticks() - tempo_erro < 2000:
+                txt = fonte_media.render(msg_erro, True, config.VERMELHO_ERRO)
+                tela.blit(txt, (config.LARGURA//2 - txt.get_width()//2, 450))
 
-        # 4. Mensagem de Vitória
+        # Vitória
         if indice_atual == len(palavra_alvo):
-            texto_win = fonte_media.render("Parabéns! Pressione ENTER para continuar.", True, PRETO)
-            rect_win = texto_win.get_rect(center=(LARGURA//2, 150))
-            tela.blit(texto_win, rect_win)
+            txt = fonte_media.render("Muito Bem! Pressione ENTER.", True, config.BRANCO_GIZ)
+            tela.blit(txt, (config.LARGURA//2 - txt.get_width()//2, 150))
 
         pygame.display.flip()
         relogio.tick(60)
