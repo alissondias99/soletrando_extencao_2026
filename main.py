@@ -3,16 +3,22 @@ import random
 import threading 
 import pyttsx3
 import sys
-
 import config
 import interface
 
-# Inicialização
+# Inicialização # 
 pygame.init()
-tela = pygame.display.set_mode((config.LARGURA, config.ALTURA))
+
+# 1. Descobrir a resolução do monitor do usuário
+info_monitor = pygame.display.Info()
+largura_inicial = info_monitor.current_w
+altura_inicial = info_monitor.current_h - 50 # Subtrai 50px para não cobrir a barra de tarefas do Windows
+
+# 2. Criar a tela com a flag RESIZABLE (Redimensionável)
+tela = pygame.display.set_mode((largura_inicial, altura_inicial), pygame.RESIZABLE)
 pygame.display.set_caption(config.TITULO)
 
-# ↓ Procura por um pacote de voz em português no sistema seguindo padrão windows, se não achar o programa ira falar em inglês
+# Configuração de Voz # 
 VOZ_ID_BRASILEIRA = None 
 temp_engine = pyttsx3.init()
 for voz in temp_engine.getProperty('voices'):
@@ -21,16 +27,18 @@ for voz in temp_engine.getProperty('voices'):
         break
 del temp_engine
 
-# Fontes
+# Fontes # 
 fonte_grande = pygame.font.Font(None, config.TAM_GRANDE)
 fonte_media = pygame.font.Font(None, config.TAM_MEDIO)
 fonte_pequena = pygame.font.Font(None, config.TAM_PEQUENO)
 
-palavras = ["ABACAXI", "COMPUTADOR", "PYTHON", "ESCOLA", "LOUSA", "FUTURO"]
+# Dados do Jogo # 
+PALAVRAS_MESTRA = ["ABACAXI", "COMPUTADOR", "PYTHON", "ESCOLA", "LOUSA", "FUTURO", "BRASIL"]
+palavras_pendentes = PALAVRAS_MESTRA.copy()
 falando_agora = False
 
-
-def executar_fala(texto): # fala a palavra, o programa fica travado enquanto a palavra estiver sendo dita
+# Funções Auxiliares # 
+def executar_fala(texto):
     global falando_agora
     try:
         falando_agora = True
@@ -46,102 +54,157 @@ def falar_palavra(palavra):
     if falando_agora: return
     threading.Thread(target=executar_fala, args=(f"A palavra é: {palavra}",), daemon=True).start()
 
-def novo_jogo():
-    return random.choice(palavras), 0, ""
+def falar_texto_livre(texto):
+    if falando_agora: return
+    threading.Thread(target=executar_fala, args=(texto,), daemon=True).start()
 
-# --- Loop Principal ---
+def novo_jogo():
+    global palavras_pendentes
+    if len(palavras_pendentes) == 0:
+        return None, 0, "" 
+    palavra = random.choice(palavras_pendentes)
+    palavras_pendentes.remove(palavra)
+    return palavra, 0, ""
+
+def reiniciar_tudo():
+    global palavras_pendentes
+    palavras_pendentes = PALAVRAS_MESTRA.copy()
+    return novo_jogo()
+
 def main():
+    global tela 
+    
     rodando = True
     relogio = pygame.time.Clock()
     
     palavra_alvo, indice_atual, msg_erro = novo_jogo()
+    jogo_zerado = False
     tempo_erro = 0
     
-    # Variáveis de Animação
-    animacao_indice = -1   # Qual letra está animando
-    animacao_escala = 1.0  # Tamanho atual da letra (1.0 é normal, 1.5 é grande)
+    animacao_indice = -1   
+    animacao_escala = 1.0  
     
     pygame.time.delay(500)
     falar_palavra(palavra_alvo)
 
     while rodando:
-        # 1. Desenha o fundo da lousa (vem do interface.py)
+        # TAMANHO ATUAL DA TELA A CADA FRAME
+        largura_tela = tela.get_width()
+        altura_tela = tela.get_height()
+
         interface.desenhar_fundo(tela)
         
-        # Eventos
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 rodando = False
             
-            if event.type == pygame.KEYDOWN:
-                if indice_atual == len(palavra_alvo) and event.key == pygame.K_RETURN:
-                    palavra_alvo, indice_atual, msg_erro = novo_jogo()
-                    falar_palavra(palavra_alvo)
-                    
-                elif event.key == pygame.K_SPACE:
-                    falar_palavra(palavra_alvo)
-                    
-                elif event.unicode.isalpha() and indice_atual < len(palavra_alvo):
-                    letra = event.unicode.upper()
-                    if letra == palavra_alvo[indice_atual]:
-                        # ACERTOU: Configura a animação
-                        animacao_indice = indice_atual # Marca qual índice vai pular
-                        animacao_escala = 1.5          # Começa grande (150%)
-                        
-                        indice_atual += 1
-                        msg_erro = ""
-                    else:
-                        msg_erro = f"Ops! '{letra}' não é a letra correta."
-                        tempo_erro = pygame.time.get_ticks()
+            # EVENTO DE REDIMENSIONAMENTO # 
+            elif event.type == pygame.VIDEORESIZE:
+                nova_largura, nova_altura = event.w, event.h
+                
+                # Bloqueio: Se tentar diminuir menos que LARGURA_MINIMA, força volta para LARGURA_MINIMA
+                if nova_largura < config.LARGURA_MINIMA:
+                    nova_largura = config.LARGURA_MINIMA
+                if nova_altura < config.ALTURA_MINIMA:
+                    nova_altura = config.ALTURA_MINIMA
+                
+                # Aplica o novo tamanho (ou o tamanho corrigido)
+                tela = pygame.display.set_mode((nova_largura, nova_altura), pygame.RESIZABLE)
 
-        # Animação
-        # Se a escala for maior que 1, diminui um pouco por frame
+            # Eventos de Teclado # 
+            elif event.type == pygame.KEYDOWN:
+                if jogo_zerado:
+                    if event.key == pygame.K_RETURN:
+                        palavra_alvo, indice_atual, msg_erro = reiniciar_tudo()
+                        jogo_zerado = False
+                        falar_palavra(palavra_alvo)
+                else:
+                    if indice_atual == len(palavra_alvo) and event.key == pygame.K_RETURN:
+                        proxima_palavra, i, msg = novo_jogo()
+                        if proxima_palavra is None:
+                            jogo_zerado = True
+                            palavra_alvo = "" 
+                            falar_texto_livre("Parabéns! Você completou todas as palavras.")
+                        else:
+                            palavra_alvo = proxima_palavra
+                            indice_atual = 0
+                            msg_erro = ""
+                            falar_palavra(palavra_alvo)
+                        
+                    elif event.key == pygame.K_SPACE and not jogo_zerado:
+                        falar_palavra(palavra_alvo)
+                        
+                    elif event.unicode.isalpha() and indice_atual < len(palavra_alvo):
+                        letra = event.unicode.upper()
+                        if letra == palavra_alvo[indice_atual]:
+                            animacao_indice = indice_atual 
+                            animacao_escala = 1.5          
+                            indice_atual += 1
+                            msg_erro = ""
+                        else:
+                            msg_erro = f"Ops! '{letra}' não é a correta."
+                            tempo_erro = pygame.time.get_ticks()
+
+        # Animação das letras aparecendo# 
         if animacao_escala > 1.0:
-            animacao_escala -= 0.05 # Velocidade da animação
+            animacao_escala -= 0.05
         else:
             animacao_escala = 1.0
-            animacao_indice = -1 # Para a animação
+            animacao_indice = -1
 
-        # Desenhando os Elementos
-        
-        # Texto de instrução (no topo)
-        instrucao = fonte_pequena.render("ESPAÇO: Ouvir palavra  |  ENTER: Próxima palavra", True, config.BRANCO_GIZ)
-        tela.blit(instrucao, (config.LARGURA//2 - instrucao.get_width()//2, 30))
+        # Desenhando Elementos (Centralizados Dinamicamente) # 
+        centro_x = largura_tela // 2
+        centro_y = altura_tela // 2
 
-        # Loop para desenhar as letras
-        largura_total = len(palavra_alvo) * 80 # = tamanho quadrado + espaço
-        inicio_x = (config.LARGURA - largura_total) // 2
-        
-        for i, letra_correta in enumerate(palavra_alvo):
-            pos_x = inicio_x + (i * 80)
-            pos_y = 250
+        if jogo_zerado:
+            texto_fim = fonte_grande.render("VOCÊ VENCEU!", True, config.VERDE_LOUSA)
             
-            if i < indice_atual:
-                # Letra já acertada
-                escala_atual = 1.0
-                
-                # Se for a letra que acabamos de acertar, aplica o 'zoom'
-                if i == animacao_indice:
-                    escala_atual = animacao_escala
-                
-                # Chama a função visual do arquivo interface.py
-                interface.desenhar_quadrado_letra(tela, fonte_grande, letra_correta, pos_x, pos_y, escala_atual)
-            else:
-                # Letra ainda oculta (apenas o underline ou quadrado vazio)
-                # Vamos desenhar um quadrado vazio escuro para parecer um buraco na madeira
-                pygame.draw.rect(tela, (20, 50, 30), (pos_x, pos_y, 70, 70), border_radius=5)
-                interface.desenhar_underline(tela, pos_x, pos_y)
+            # Caixa centralizada
+            rect_fim = pygame.Rect(0, 0, 500, 200)
+            rect_fim.center = (centro_x, centro_y)
+            pygame.draw.rect(tela, config.BRANCO_GIZ, rect_fim, border_radius=10)
+            
+            rect_texto = texto_fim.get_rect(center=(centro_x, centro_y - 20))
+            tela.blit(texto_fim, rect_texto)
+            
+            texto_restart = fonte_pequena.render("Pressione ENTER para jogar novamente", True, config.MARROM_MADEIRA)
+            rect_restart = texto_restart.get_rect(center=(centro_x, centro_y + 40))
+            tela.blit(texto_restart, rect_restart)
 
-        # Mensagem de Erro
-        if msg_erro:
-            if pygame.time.get_ticks() - tempo_erro < 2000:
-                txt = fonte_media.render(msg_erro, True, config.VERMELHO_ERRO)
-                tela.blit(txt, (config.LARGURA//2 - txt.get_width()//2, 450))
+        else:
+            instrucao = fonte_pequena.render("ESPAÇO: Ouvir palavra  |  ENTER: Próxima", True, config.BRANCO_GIZ)
+            tela.blit(instrucao, (centro_x - instrucao.get_width()//2, 30))
 
-        # Vitória
-        if indice_atual == len(palavra_alvo):
-            txt = fonte_media.render("Muito Bem! Pressione ENTER.", True, config.BRANCO_GIZ)
-            tela.blit(txt, (config.LARGURA//2 - txt.get_width()//2, 150))
+            # Calculando posição das palavras para ficar sempre no meio
+            largura_palavra_total = len(palavra_alvo) * 80 
+            inicio_x = centro_x - (largura_palavra_total // 2)
+            # Define o Y um pouco acima do meio, mas proporcional
+            pos_y_letras = centro_y - 50 
+            
+            for i, letra_correta in enumerate(palavra_alvo):
+                pos_x = inicio_x + (i * 80)
+                
+                if i < indice_atual:
+                    escala_atual = 1.0
+                    if i == animacao_indice:
+                        escala_atual = animacao_escala
+                    interface.desenhar_quadrado_letra(tela, fonte_grande, letra_correta, pos_x, pos_y_letras, escala_atual)
+                else:
+                    # Quadrado vazio
+                    pygame.draw.rect(tela, (20, 50, 30), (pos_x, pos_y_letras, 70, 70), border_radius=5)
+                    interface.desenhar_underline(tela, pos_x, pos_y_letras)
+
+            # Mensagem de Erro e Vitória (Centralizados na parte inferior)
+            if msg_erro:
+                if pygame.time.get_ticks() - tempo_erro < 2000:
+                    txt = fonte_media.render(msg_erro, True, config.VERMELHO_ERRO)
+                    rect_txt = txt.get_rect(center=(centro_x, altura_tela - 100))
+                    tela.blit(txt, rect_txt)
+
+            if indice_atual == len(palavra_alvo):
+                txt = fonte_media.render("Muito Bem! Pressione ENTER.", True, config.BRANCO_GIZ)
+                rect_txt = txt.get_rect(center=(centro_x, pos_y_letras - 100))
+                tela.blit(txt, rect_txt)
 
         pygame.display.flip()
         relogio.tick(60)
