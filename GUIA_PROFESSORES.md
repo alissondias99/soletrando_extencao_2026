@@ -1,194 +1,116 @@
 # 📚 GUIA RÁPIDO PARA PROFESSORES
-## Aventura das Letras - Como Usar em Sala de Aula
+## Soletrando na Lousa - Como Usar em Sala de Aula
 
 ---
 
 ## 🎯 Objetivos Pedagógicos
 
-Este jogo foi desenvolvido para auxiliar no processo de alfabetização, trabalhando:
+Este jogo foi desenvolvido para auxiliar no processo de alfabetização e letramento, trabalhando:
 
-- ✅ Reconhecimento visual de letras
-- ✅ Associação letra-som
-- ✅ Formação de palavras
-- ✅ Coordenação motora fina (uso do teclado)
-- ✅ Resolução de problemas
-- ✅ Persistência e autoconfiança
+- ✅ Percepção e atenção auditiva
+- ✅ Associação fonema-grafema (som e letra)
+- ✅ Ortografia e formação de palavras
+- ✅ Familiarização com o teclado do computador (letramento digital)
+- ✅ Concentração e memória de curto prazo
+- ✅ Tolerância à frustração (através do sistema de pontuação gradual)
 
 ---
 
 ## 👥 Público-Alvo
 
-**Ideal para:** Alunos do 1º ao 3º ano do Ensino Fundamental (6 a 8 anos)
+**Ideal para:** Alunos do 1º ao 4º ano do Ensino Fundamental (6 a 9 anos)
 
 **Modalidades de uso:**
-- Atividade individual no laboratório de informática
-- Reforço para alunos com dificuldade
-- Atividade lúdica de alfabetização
-- Lição de casa (com o jogo instalado em casa)
+- Ditado interativo no laboratório de informática.
+- Reforço para alunos com dificuldade ortográfica.
+- Estações de rotação em sala de aula.
+- Treino de vocabulário específico (ex: palavras complexas no 3º e 4º ano).
 
 ---
 
 ## 🎮 Como Funciona o Jogo
 
-### Etapa 1: Plataforma
-O aluno controla um personagem que pula entre plataformas para coletar letras espalhadas pelo cenário.
+O "Soletrando na Lousa" simula um ditado escolar interativo.
 
-**Controles:**
-- **Setas** ← → = Mover
-- **ESPAÇO** = Pular
+### Etapa 1: O Menu de Dificuldade
+O aluno escolhe entre Fácil, Médio ou Difícil. Cada nível possui um banco de palavras adequado para a fase de aprendizado.
 
-### Etapa 2: Coleta
-Todas as letras de uma palavra estão escondidas no cenário. O aluno precisa coletar todas antes de avançar.
+### Etapa 2: A Escuta
+O computador "fala" uma palavra em voz alta. O aluno precisa ouvir com atenção. Se não entender, pode pedir para o computador repetir.
 
-### Etapa 3: Formação
-Após coletar todas as letras, o aluno deve clicar nelas na ordem correta para formar a palavra.
+### Etapa 3: A Digitação
+O aluno deve digitar a palavra no teclado, letra por letra, na ordem correta. 
+- Se acertar, a letra aparece na lousa com uma animação.
+- Se errar, uma mensagem vermelha avisa o erro e a letra não é inserida.
 
-### Etapa 4: Verificação
-O jogo indica se a palavra está correta. Se sim, avança para o próximo nível!
+### Etapa 4: Pontuação (Gamificação)
+O jogo recompensa a precisão:
+- **0 erros:** Ganha 2 pontos (Incentiva a pensar antes de digitar).
+- **1 a 4 erros:** Ganha 1 ponto.
+- **5+ erros:** Ganha 0 pontos (Evita que o aluno tente adivinhar apertando todas as teclas).
+
+---
+
+## 🕹️ Controles do Jogo
+
+- **Mouse:** Apenas para clicar no botão de dificuldade no Menu.
+- **Teclado (Letras):** Para digitar a palavra solicitada.
+- **ESPAÇO:** Pede para o computador repetir a palavra em voz alta.
+- **ENTER:** Avança para a próxima palavra após acertar.
+- **ESC:** Interrompe o jogo e volta ao Menu Principal.
 
 ---
 
 ## 🏫 Sugestões de Uso em Sala
 
-### Opção 1: Atividade Livre (15-20 min)
-- Deixe os alunos explorarem o jogo livremente
-- Observe quais têm facilidade/dificuldade
-- Ajude quem precisar com os controles
+### Opção 1: Ditado Autônomo (15-20 min)
+- Com fones de ouvido, cada aluno faz o seu ditado no próprio ritmo.
+- O professor circula pela sala auxiliando quem tem dúvidas na ortografia.
 
-### Opção 2: Atividade Dirigida (30-40 min)
-1. **Introdução (5 min):** Explique os controles no datashow
-2. **Prática (20 min):** Alunos jogam individualmente
-3. **Discussão (10 min):** Pergunte quais palavras encontraram
-4. **Extensão (5 min):** Peça para escreverem as palavras no caderno
+### Opção 2: Desafio da Pontuação
+- Proponha que os alunos tentem fazer a pontuação máxima no nível Fácil antes de ir para o Médio.
+- Isso estimula a leitura atenta e reduz o "chute" de letras.
 
-### Opção 3: Competição Amigável (30 min)
-- Divida a turma em duplas
-- Quem completa mais níveis?
-- Enfatize cooperação, não só competição
-- Prêmio simbólico para todos participantes
-
-### Opção 4: Reforço Individualizado
-- Use com alunos que precisam de prática extra
-- Acompanhe o progresso ao longo das semanas
-- Registre quais palavras causam mais dificuldade
+### Opção 3: Lista de Palavras Personalizada
+- Você pode pedir ao responsável pelo laboratório para alterar as palavras no código do jogo, alinhando-as com o vocabulário que está sendo estudado na semana (ex: palavras com CH, LH, NH).
 
 ---
 
 ## 📊 O Que Observar
 
 Durante o uso do jogo, observe:
-
-### Aspectos Técnicos:
-- ❓ O aluno consegue usar os controles?
-- ❓ Entende a mecânica do jogo?
-- ❓ Precisa de ajuda para navegar?
-
-### Aspectos Pedagógicos:
-- ❓ Reconhece as letras visualmente?
-- ❓ Consegue formar palavras corretamente?
-- ❓ Quantas tentativas precisa?
-- ❓ Mostra frustração ou persistência?
-
-### Aspectos Emocionais:
-- ❓ Está engajado?
-- ❓ Se diverte enquanto aprende?
-- ❓ Pede para jogar mais?
-- ❓ Compartilha com colegas?
-
----
-
-## 💡 Dicas de Mediação
-
-### Para Alunos com Dificuldade:
-- ✏️ Dê dicas visuais (aponte para a letra certa)
-- ✏️ Pronuncie a palavra junto com eles
-- ✏️ Use materiais concretos (letras móveis) paralelamente
-- ✏️ Comemore cada pequena conquista
-
-### Para Alunos Avançados:
-- 🚀 Desafie-os a completar sem dicas
-- 🚀 Peça para ajudarem colegas com dificuldade
-- 🚀 Proponha criar suas próprias palavras
-
-### Para Todos:
-- 🌟 Mantenha clima positivo e sem pressão
-- 🌟 Enfatize o aprendizado, não a velocidade
-- 🌟 Aceite que errar faz parte do processo
-- 🌟 Conecte o jogo com atividades offline
+- ❓ O aluno reconhece a palavra apenas ouvindo?
+- ❓ Ele encontra as letras com facilidade no teclado?
+- ❓ Troca letras com sons parecidos (F/V, P/B, T/D)?
+- ❓ Recorre muito à tecla ESPAÇO para ouvir novamente?
 
 ---
 
 ## 🔧 Instalação no Laboratório
 
 ### Passo 1: Verifique Requisitos
-- Windows 7 ou superior
-- Python 3.7+ instalado
-- Pygame instalado
+- Computador com caixas de som ou fones de ouvido (Obrigatório).
+- Python 3.7+ instalado.
+- O Windows deve ter o pacote de voz "Português (Brasil)" instalado nas configurações de idioma.
 
-### Passo 2: Instalação Rápida
-```
-1. Copie a pasta do jogo para C:\AventuraLetras
-2. Crie um atalho do arquivo "aventura_letras.py"
-3. Coloque o atalho na área de trabalho
-```
+### Passo 2: Instalação das Bibliotecas
+No terminal do computador, instale as dependências:
+`pip install pygame pyttsx3`
 
-### Passo 3: Teste
-- Clique duas vezes no atalho
-- Verifique se o jogo abre corretamente
-- Teste todos os controles
-
-*(Para instalação detalhada, veja o arquivo README.md)*
-
----
-
-## 📝 Registro de Uso
-
-Sugerimos manter um registro simples:
-
-| Data | Turma | Alunos | Palavras Jogadas | Observações |
-|------|-------|--------|------------------|-------------|
-| 10/03 | 1º A | 25 | GATO, BOLA | Ótimo engajamento! |
-| 12/03 | 2º B | 22 | CASA, FLOR | 3 alunos precisaram ajuda |
-
----
-
-## 🎯 Adaptações Possíveis
-
-### Para Turmas Diferentes:
-- **1º ano:** Use apenas palavras de 3-4 letras
-- **2º ano:** Misture 4-5 letras
-- **3º ano:** Introduza palavras mais complexas
-
-### Interdisciplinaridade:
-- 🌍 **Ciências:** Use palavras como PLANTA, ANIMAL
-- 🎨 **Artes:** PINTURA, DESENHO
-- 📐 **Matemática:** NÚMERO, CONTAR
+### Passo 3: Execução
+1. Copie a pasta do jogo para o computador.
+2. Crie um atalho do arquivo `main.py` para a Área de Trabalho.
+3. Teste o áudio antes da aula para garantir que a voz está em português.
 
 ---
 
 ## 🤝 Feedback para Melhoria
 
 Sua opinião é fundamental! Após usar o jogo, por favor compartilhe:
-
 ✉️ **O que funcionou bem?**
-
-✉️ **O que precisa melhorar?**
-
-✉️ **Sugestões de palavras?**
-
-✉️ **Ideias para novas funcionalidades?**
-
----
-
-## 📞 Suporte
-
-Dúvidas ou problemas técnicos:
-- **Desenvolvedor:** [Seu Nome]
-- **Email:** [seu-email]
-- **Disponibilidade:** [dias/horários]
+✉️ **As palavras estavam adequadas para a idade?**
+✉️ **A velocidade da voz do computador estava boa?**
 
 ---
 
 **Bom uso e ótimas aulas!** 🎓📚
-
-*Desenvolvido como Projeto de Extensão - SI 5º Período*

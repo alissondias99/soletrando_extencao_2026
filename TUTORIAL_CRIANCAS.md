@@ -1,140 +1,81 @@
-# 🎮 COMO JOGAR - AVENTURA DAS LETRAS
+# 🎮 COMO JOGAR - SOLETRANDO NA LOUSA
 ## Tutorial para Crianças
 
 ---
 
 ## 🎯 O QUE VOCÊ VAI FAZER?
 
-Você vai ajudar o personagem a **PULAR** e **COLETAR LETRAS**! 
+Você vai brincar de ditado com o computador! 
+Ele vai falar uma palavra e você precisa digitar as letras certinhas no teclado para escrever a palavra na lousa.
 
-Depois, vai **FORMAR PALAVRAS** com as letras que você pegou!
-
-É super divertido! 🎉
+É super divertido e ajuda a treinar o ouvido e a escrita! 🎉
 
 ---
 
-## 🕹️ COMANDOS DO TECLADO
+## 🕹️ COMO USAR O TECLADO
 
-### Para ANDAR:
+Você não vai precisar pular ou correr neste jogo. Você só vai usar a sua cabeça e os seus dedos!
 
-```
-Apertar ← (seta esquerda) = anda para ESQUERDA 👈
-Apertar → (seta direita) = anda para DIREITA 👉
-```
-
-### Para PULAR:
-
-```
-Apertar ESPAÇO = PULA! ⬆️
-```
-
-**DICA:** Segure a seta enquanto pula para pular longe!
+- **MOUSE:** Use para clicar no botão de FÁCIL, MÉDIO ou DIFÍCIL.
+- **LETRAS (A até Z):** Aperte para escrever a palavra.
+- **BARRA DE ESPAÇO:** Aperte para ouvir a palavra de novo. 🔊
+- **ENTER (A tecla gordinha):** Aperte para ir para a próxima palavra.
+- **ESC (Lá no cantinho de cima):** Aperte para voltar ao Menu.
 
 ---
 
 ## 📖 PASSO A PASSO
 
-### 🟢 PASSO 1: COMEÇAR O JOGO
+### 🟢 PASSO 1: ESCOLHER O NÍVEL
+1. Clique no jogo para abrir.
+2. Vai aparecer o Menu na lousa.
+3. Clique com o mouse no nível que você quer tentar (Fácil, Médio ou Difícil).
 
-1. Clique no jogo para abrir
-2. Aparece a tela inicial
-3. Aperte **ENTER** para começar!
+### 🟡 PASSO 2: OUVIR COM ATENÇÃO
+1. O jogo vai começar. Faça silêncio e **ouça**!
+2. O computador vai dizer: *"A palavra é: GATO"*.
+3. Esqueceu a palavra? Não tem problema! É só apertar a tecla **ESPAÇO** que ele repete para você.
 
----
+### 🔵 PASSO 3: SOLETRAR
+1. Olhe para o teclado e procure a primeira letra.
+2. Apertou a certa? Ela pula para dentro do quadradinho de madeira na lousa!
+3. Apertou a errada? Ops! Vai aparecer um aviso vermelho. Tente outra letra.
 
-### 🟡 PASSO 2: COLETAR AS LETRAS
+### ⚪ PASSO 4: GANHAR PONTOS! 🏆
+Sabe o que é muito legal? Você ganha pontos por prestar atenção!
+- Se você escrever a palavra todinha **sem errar nenhuma letra**, você ganha **2 Pontos**! ⭐⭐
+- Se você errar só um pouquinho, ganha **1 Ponto**. ⭐
+- Se errar muito, não ganha pontos nessa palavra. 
 
-1. Use as **SETAS** para andar
-2. Use **ESPAÇO** para pular
-3. Pegue todas as letrinhas **AMARELAS** ⭐
-4. Cada letra que você pega vai aparecer lá em cima!
-
-**ATENÇÃO:** Não caia da tela! Se cair, você volta pro começo.
-
----
-
-### 🔵 PASSO 3: FORMAR A PALAVRA
-
-Quando você pegar TODAS as letras:
-
-1. Aperte **ENTER**
-2. Vai aparecer uma tela ROXA
-3. Você vai ver as letras que pegou
-4. **CLIQUE** nas letras na ordem certa
-5. Se errar, aperte **BACKSPACE** (←) para apagar
-
-**DICA:** A palavra certa está escrita lá em cima para te ajudar!
+Então, pense bem antes de apertar as letras!
 
 ---
 
-### ⚪ PASSO 4: VERIFICAR
+## 🎨 AS CORES DO JOGO
 
-Depois de montar a palavra:
-
-1. Aperte **ENTER** de novo
-2. Se acertar: **PARABÉNS!** ✨ Você passa de fase!
-3. Se errar: **Ops!** Tente de novo!
-
----
-
-## 🎨 CORES DO JOGO
-
-- 🟦 **AZUL** = Céu e personagem
-- 🟩 **VERDE** = Plataformas (onde você pisa)
-- 🟨 **AMARELO** = Letras para pegar
-- 🟪 **ROXO** = Tela de formar palavra
-
----
-
-## 💪 VOCÊ CONSEGUE!
-
-### Se você cair:
-❌ Não tem problema! Tente de novo!
-
-### Se errar a palavra:
-❌ Tudo bem! Olha a dica e tenta outra vez!
-
-### Se não conseguir pular:
-💡 Pede ajuda para a professora ou amigo!
-
----
-
-## 🌟 PALAVRAS DO JOGO
-
-No começo, as palavras são fáceis:
-- GATO 🐱
-- BOLA ⚽
-- CASA 🏠
-- FLOR 🌸
-- LIVRO 📚
-
-Depois ficam um pouquinho mais difíceis!
+- 🟩 **VERDE** = A nossa lousa.
+- 🟫 **MARROM** = As pecinhas de madeira onde as letras entram.
+- ⬜ **BRANCO** = A letra escrita com giz.
+- 🟥 **VERMELHO** = Ops, letra errada!
 
 ---
 
 ## 🏆 DICAS ESPECIAIS
 
-1. 🎯 **Olhe bem** onde estão as letras antes de ir pegar
-2. 🐢 **Vá devagar** - não precisa correr!
-3. 🤔 **Pense bem** antes de clicar nas letras
-4. 😊 **Divirta-se!** É um jogo!
+1. 👂 **Feche os olhos** e ouça a palavra se estiver difícil de entender.
+2. 🐢 **Vá devagar** - Não precisa apertar as teclas correndo. Pense no som de cada letrinha.
+3. 🕵️ **Cuidado com as "pegadinhas"** - Será que é com C ou com S? Com F ou com V?
+4. 😊 **Divirta-se!** Se errar, você aprende para a próxima!
 
 ---
 
 ## ❓ PRECISA DE AJUDA?
 
 Chame a **PROFESSORA** ou um **AMIGUINHO**! 🙋‍♀️🙋‍♂️
-
-Todo mundo pode ajudar todo mundo! 🤝
+E não esqueça: coloque o fone de ouvido para ouvir o computador direitinho!
 
 ---
 
 ## 🎉 AGORA É SUA VEZ!
 
-**VAMOS JOGAR?** 
-
-Boa sorte e muita diversão! 🚀📚✨
-
----
-
-*Jogo feito com muito carinho para você aprender brincando!* 💙
+**VAMOS SOLETRAR?** Boa sorte e muita diversão! 🚀📚✨
