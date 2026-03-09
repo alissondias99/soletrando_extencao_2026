@@ -30,7 +30,7 @@ fonte_pequena = pygame.font.Font(None, config.TAM_PEQUENO)
 
 # DADOS DO JOGO 
 LISTAS_PALAVRAS = {
-    "FACIL": ["GATO", "CASA"],
+    "FACIL": ["GATO", "CASA", "BOLA", "SAPO", "SOL", "MESA", "FOGO", "LUA"],
     "MEDIO": ["CADERNO", "ESCOLA", "BRINCAR", "JARDIM", "QUEIJO", "FOGUETE"],
     "DIFICIL": ["COMPUTADOR", "ELEFANTE", "PROGRAMACAO", "CHOCOLATE", "ASTRONAUTA"]
 }
@@ -75,11 +75,16 @@ def reiniciar_tudo():
 # Loop Principal 
 def main():
     global tela 
-    
     rodando = True
     relogio = pygame.time.Clock()
     
-    estado_jogo = "MENU"
+    # O jogo agora começa na tela de LOGIN
+    estado_jogo = "LOGIN" 
+    
+    # Variáveis do Login
+    ra_texto = ""
+    nome_texto = ""
+    campo_ativo = "RA" 
     
     # Variáveis da partida
     palavra_alvo = ""
@@ -89,16 +94,22 @@ def main():
     tempo_erro = 0
     animacao_indice = -1   
     animacao_escala = 1.0  
-    
-    # Variáveis de Pontuação
     pontuacao = 0
-    erros_palavra = 0 # Conta os erros na palavra atual
+    
+    # VARIÁVEIS DE MÉTRICA (Invisíveis na tela, enviadas para o console/API) 
+    erros_palavra = 0 
+    tempo_inicio_palavra = 0
 
     while rodando:
         largura_tela = tela.get_width()
         altura_tela = tela.get_height()
         centro_x = largura_tela // 2
         centro_y = altura_tela // 2
+
+        # Posições das caixas de texto
+        rect_box_ra = pygame.Rect(centro_x - 150, centro_y - 70, 300, 50)
+        rect_box_nome = pygame.Rect(centro_x - 150, centro_y + 30, 300, 50)
+        rect_btn_entrar = pygame.Rect(centro_x - 100, centro_y + 120, 200, 60)
 
         interface.desenhar_fundo(tela)
         mx, my = pygame.mouse.get_pos()
@@ -118,9 +129,36 @@ def main():
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1: 
                     clicou = True
+                    if estado_jogo == "LOGIN":
+                        if rect_box_ra.collidepoint((mx, my)):
+                            campo_ativo = "RA"
+                        elif rect_box_nome.collidepoint((mx, my)):
+                            campo_ativo = "NOME"
 
             elif event.type == pygame.KEYDOWN:
-                if estado_jogo == "JOGANDO":
+                
+                # EVENTOS DA TELA DE LOGIN 
+                if estado_jogo == "LOGIN":
+                    if event.key == pygame.K_TAB:
+                        campo_ativo = "NOME" if campo_ativo == "RA" else "RA"
+                    elif event.key == pygame.K_RETURN:
+                        if len(ra_texto) > 0 and len(nome_texto) > 0:
+                            estado_jogo = "MENU" 
+                        else:
+                            campo_ativo = "NOME" if campo_ativo == "RA" else "RA"
+                    elif event.key == pygame.K_BACKSPACE:
+                        if campo_ativo == "RA": ra_texto = ra_texto[:-1]
+                        else: nome_texto = nome_texto[:-1]
+                    else:
+                        if campo_ativo == "RA":
+                            if event.unicode.isnumeric() and len(ra_texto) < 15:
+                                ra_texto += event.unicode
+                        elif campo_ativo == "NOME":
+                            if (event.unicode.isalpha() or event.unicode == " ") and len(nome_texto) < 20:
+                                nome_texto += event.unicode.upper()
+
+                # EVENTOS DO JOGO 
+                elif estado_jogo == "JOGANDO":
                     if event.key == pygame.K_ESCAPE:
                         estado_jogo = "MENU" 
                         
@@ -128,18 +166,22 @@ def main():
                         if event.key == pygame.K_RETURN:
                             palavra_alvo, indice_atual, msg_erro = reiniciar_tudo()
                             jogo_zerado = False
-                            pontuacao = 0 # Zera os pontos ao reiniciar
+                            pontuacao = 0 
+                            # Reseta métricas ao reiniciar o nível
                             erros_palavra = 0
+                            tempo_inicio_palavra = pygame.time.get_ticks()
                             falar_palavra(palavra_alvo)
                     else:
                         if indice_atual == len(palavra_alvo) and event.key == pygame.K_RETURN:
                             proxima_palavra, i, msg = novo_jogo()
-                            erros_palavra = 0 # Reseta os erros para a nova palavra
+                            # Reseta métricas para a próxima palavra
+                            erros_palavra = 0 
+                            tempo_inicio_palavra = pygame.time.get_ticks()
                             
                             if proxima_palavra is None:
                                 jogo_zerado = True
                                 palavra_alvo = "" 
-                                falar_texto_livre(f"Parabéns! Você completou todas as palavras. Sua pontuação foi {pontuacao}.")
+                                falar_texto_livre(f"Parabéns {nome_texto}! Você completou todas as palavras. Sua pontuação foi {pontuacao}.")
                             else:
                                 palavra_alvo = proxima_palavra
                                 indice_atual = 0
@@ -161,13 +203,15 @@ def main():
                                 
                                 # VERIFICA SE A PALAVRA ACABOU NESTE EXATO MOMENTO
                                 if indice_atual == len(palavra_alvo):
-                                    if erros_palavra == 0 or erros_palavra <= 2:
-                                        pontuacao += 2
-                                    elif erros_palavra >= 3:
-                                        pontuacao += 1
-                                    # else:
-                                         # Se errou 3 ou mais, ganha 0.
-                                    #    pontuacao += 0 
+                                    # Calcula tempo final (Ticks atuais - Ticks iniciais) / 1000 para segundos
+                                    tempo_total_segundos = (pygame.time.get_ticks() - tempo_inicio_palavra) / 1000
+                                    
+                                    # Lógica de Pontuação baseada em erros
+                                    if erros_palavra == 0: pontuacao += 2
+                                    elif erros_palavra < 5: pontuacao += 1
+                                    
+                                    # LOG PARA O DESENVOLVEDOR (Futuro envio API)
+                                    print(f"[API_LOG] Aluno: {nome_texto} | RA: {ra_texto} | Palavra: {palavra_alvo} | Erros: {erros_palavra} | Tempo: {tempo_total_segundos:.2f}s")
                                         
                             # ERROU A LETRA
                             else:
@@ -181,12 +225,57 @@ def main():
 
         # DESENHO DA TELA
         
-        if estado_jogo == "MENU":
-            titulo = fonte_grande.render("ESCOLHA A DIFICULDADE", True, config.BRANCO_GIZ)
+        if estado_jogo == "LOGIN":
+            titulo = fonte_grande.render("IDENTIFICAÇÃO DO ALUNO", True, config.BRANCO_GIZ)
             tela.blit(titulo, titulo.get_rect(center=(centro_x, centro_y - 150)))
+
+            lbl_ra = fonte_pequena.render("Digite seu RA (Apenas Números):", True, config.BRANCO_GIZ)
+            tela.blit(lbl_ra, (rect_box_ra.x, rect_box_ra.y - 25))
+            
+            lbl_nome = fonte_pequena.render("Digite seu Nome:", True, config.BRANCO_GIZ)
+            tela.blit(lbl_nome, (rect_box_nome.x, rect_box_nome.y - 25))
+
+            COR_ATIVA = (255, 215, 0) 
+            cor_borda_ra = COR_ATIVA if campo_ativo == "RA" else config.MARROM_MADEIRA
+            cor_borda_nome = COR_ATIVA if campo_ativo == "NOME" else config.MARROM_MADEIRA
+
+            pygame.draw.rect(tela, (250, 250, 250), rect_box_ra, border_radius=5)
+            pygame.draw.rect(tela, cor_borda_ra, rect_box_ra, 4, border_radius=5)
+            
+            pygame.draw.rect(tela, (250, 250, 250), rect_box_nome, border_radius=5)
+            pygame.draw.rect(tela, cor_borda_nome, rect_box_nome, 4, border_radius=5)
+
+            cursor_ra = "|" if campo_ativo == "RA" and pygame.time.get_ticks() % 1000 < 500 else ""
+            cursor_nome = "|" if campo_ativo == "NOME" and pygame.time.get_ticks() % 1000 < 500 else ""
+
+            txt_ra = fonte_media.render(ra_texto + cursor_ra, True, (0, 0, 0))
+            tela.blit(txt_ra, (rect_box_ra.x + 10, rect_box_ra.y + 10))
+            
+            txt_nome = fonte_media.render(nome_texto + cursor_nome, True, (0, 0, 0))
+            tela.blit(txt_nome, (rect_box_nome.x + 10, rect_box_nome.y + 10))
+
+            pode_entrar = len(ra_texto) > 0 and len(nome_texto) > 0
+            hover_entrar = rect_btn_entrar.collidepoint((mx, my))
+            
+            if pode_entrar:
+                cor_btn = config.MARROM_CLARO if hover_entrar else config.MARROM_MADEIRA
+            else:
+                cor_btn = (150, 150, 150) 
+
+            interface.desenhar_botao(tela, "ENTRAR", fonte_media, rect_btn_entrar.x, rect_btn_entrar.y, 200, 60, cor_btn, config.BRANCO_GIZ)
+
+            if hover_entrar and clicou and pode_entrar:
+                estado_jogo = "MENU"
+
+        elif estado_jogo == "MENU":
+            saudacao = fonte_pequena.render(f"Olá, {nome_texto}! RA: {ra_texto}", True, config.BRANCO_GIZ)
+            tela.blit(saudacao, saudacao.get_rect(center=(centro_x, 30)))
+
+            titulo = fonte_grande.render("ESCOLHA A DIFICULDADE", True, config.BRANCO_GIZ)
+            tela.blit(titulo, titulo.get_rect(center=(centro_x, centro_y - 120)))
             
             def criar_botao_menu(texto, pos_y, chave_nivel):
-                nonlocal estado_jogo, palavra_alvo, indice_atual, msg_erro, jogo_zerado, pontuacao, erros_palavra
+                nonlocal estado_jogo, palavra_alvo, indice_atual, msg_erro, jogo_zerado, pontuacao, erros_palavra, tempo_inicio_palavra
                 global lista_atual, palavras_pendentes
                 
                 largura_btn, altura_btn = 250, 70
@@ -201,25 +290,27 @@ def main():
                     palavra_alvo, indice_atual, msg_erro = reiniciar_tudo()
                     jogo_zerado = False
                     estado_jogo = "JOGANDO"
-                    pontuacao = 0 # Inicia o nível com zero pontos
+                    pontuacao = 0 
+                    
+                    # Inicia as métricas para a 1ª palavra do nível
                     erros_palavra = 0
+                    tempo_inicio_palavra = pygame.time.get_ticks() 
+                    
                     pygame.time.delay(300) 
                     falar_palavra(palavra_alvo)
 
-            criar_botao_menu("FÁCIL", centro_y - 40, "FACIL")
-            criar_botao_menu("MÉDIO", centro_y + 50, "MEDIO")
-            criar_botao_menu("DIFÍCIL", centro_y + 140, "DIFICIL")
+            criar_botao_menu("FÁCIL", centro_y - 20, "FACIL")
+            criar_botao_menu("MÉDIO", centro_y + 70, "MEDIO")
+            criar_botao_menu("DIFÍCIL", centro_y + 160, "DIFICIL")
 
         elif estado_jogo == "JOGANDO":
             instrucao = fonte_pequena.render("ESPAÇO: Ouvir  |  ENTER: Próxima  |  ESC: Menu", True, config.BRANCO_GIZ)
             tela.blit(instrucao, (centro_x - instrucao.get_width()//2, 30))
 
-            # DESENHAR A PONTUAÇÃO 
             texto_pontos = fonte_media.render(f"Pontos: {pontuacao}", True, config.BRANCO_GIZ)
             tela.blit(texto_pontos, (largura_tela - texto_pontos.get_width() - 30, 20))
 
             if jogo_zerado:
-                # TELA FINAL MOSTRANDO A PONTUAÇÃO
                 texto_fim = fonte_grande.render("NÍVEL CONCLUÍDO!", True, config.VERDE_LOUSA)
                 texto_score = fonte_media.render(f"Sua Pontuação: {pontuacao}", True, config.MARROM_MADEIRA)
                 
@@ -230,7 +321,7 @@ def main():
                 tela.blit(texto_fim, texto_fim.get_rect(center=(centro_x, centro_y - 40)))
                 tela.blit(texto_score, texto_score.get_rect(center=(centro_x, centro_y + 10)))
                 
-                texto_restart = fonte_pequena.render("ENTER: Jogar Novamente  |  ESC: Menu", True, config.CINZA)
+                texto_restart = fonte_pequena.render("ENTER: Jogar Novamente  |  ESC: Menu", True, (150, 150, 150))
                 tela.blit(texto_restart, texto_restart.get_rect(center=(centro_x, centro_y + 70)))
 
             else:
