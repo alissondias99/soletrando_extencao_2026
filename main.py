@@ -5,23 +5,18 @@ import pyttsx3
 import sys
 import config
 import interface
+from gtts import gTTS
+import io
 
-# Inicialização 
+
 pygame.init()
+pygame.mixer.init()
 info_monitor = pygame.display.Info()
 largura_inicial = info_monitor.current_w
 altura_inicial = info_monitor.current_h - 50 
 tela = pygame.display.set_mode((largura_inicial, altura_inicial), pygame.RESIZABLE)
 pygame.display.set_caption(config.TITULO)
 
-# Configuração de Voz 
-VOZ_ID_BRASILEIRA = None 
-temp_engine = pyttsx3.init()
-for voz in temp_engine.getProperty('voices'):
-    if "brazil" in voz.name.lower() or "pt-br" in voz.id.lower():
-        VOZ_ID_BRASILEIRA = voz.id
-        break
-del temp_engine
 
 # Fontes 
 fonte_grande = pygame.font.Font(None, config.TAM_GRANDE)
@@ -30,9 +25,9 @@ fonte_pequena = pygame.font.Font(None, config.TAM_PEQUENO)
 
 # DADOS DO JOGO 
 LISTAS_PALAVRAS = {
-    "FACIL": ["GATO", "CASA", "BOLA", "SAPO", "SOL", "MESA", "FOGO", "LUA"],
+    "FACIL": ["CAÇADOR", "PROGRAMAÇÂO", "PÉ"],
     "MEDIO": ["CADERNO", "ESCOLA", "BRINCAR", "JARDIM", "QUEIJO", "FOGUETE"],
-    "DIFICIL": ["COMPUTADOR", "ELEFANTE", "PROGRAMACAO", "CHOCOLATE", "ASTRONAUTA"]
+    "DIFICIL": ["COMPUTADOR", "ELEFANTE", "PROGRAMAÇÃO", "CHOCOLATE", "ASTRONAUTA"]
 }
 lista_atual = [] 
 palavras_pendentes = []
@@ -56,8 +51,24 @@ def falar_palavra(palavra):
     threading.Thread(target=executar_fala, args=(f"A palavra é: {palavra}",), daemon=True).start()
 
 def falar_texto_livre(texto):
-    if falando_agora: return
-    threading.Thread(target=executar_fala, args=(texto,), daemon=True).start()
+    """Gera o áudio com o Google e toca sem travar o jogo"""
+    try:
+        # Cria o áudio em português do Brasil
+        tts = gTTS(text=texto, lang='pt', tld='com.br')
+        
+        # Salva o áudio na memória RAM (muito rápido, não cria arquivo no PC)
+        fp = io.BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        
+        # O Pygame toca a música de fundo perfeitamente
+        pygame.mixer.music.load(fp)
+        pygame.mixer.music.play()
+    except Exception as e:
+        print(f"[ERRO DE ÁUDIO] Verifique a conexão com a internet: {e}")
+
+def falar_palavra(palavra):
+    falar_texto_livre(f"A palavra é: {palavra}")
 
 def novo_jogo():
     global palavras_pendentes
